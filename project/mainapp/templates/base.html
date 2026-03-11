@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Учебный проект{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="/">Учебный проект</a>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="/">Главная</a></li>
+                <li><a href="/items/">Объекты</a></li>
+                <li><a href="/categories/">Категории</a></li>
+
+                {% if user.is_authenticated %}
+                    <li>
+                        <form action="/logout/" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-button">Выход</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li><a href="/login/">Вход</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>Учебный клиент-серверный проект на Django</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Учебный проект</h1>
+    <p>
+        Простое клиент-серверное веб-приложение на Django для управления объектами предметной области.
+    </p>
+
+    <div class="hero-buttons">
+        <a class="btn" href="/items/">Список объектов</a>
+        <a class="btn btn-secondary" href="/login/">Войти</a>
+    </div>
+</section>
+{% endblock %}
