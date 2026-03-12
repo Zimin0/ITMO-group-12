@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Управление складом - Santa CRM{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <h1 class="page-title">📦 Управление складом</h1>
+</header>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Тип подарка</th>
+                <th>Категория</th>
+                <th style="text-align: center;">В наличии</th>
+                <th style="text-align: center;">Обновить запас</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td style="font-weight: 800; color: var(--santa-red); font-size: 1.2rem;">{{ item.title }}</td>
+                    <td>{{ item.category.name|default:"—" }}</td>
+                    <td style="text-align: center;">
+                        <span class="{% if item.inventory.stock > 10 %}stock-in-stock{% else %}stock-low{% endif %}">
+                            {{ item.inventory.stock|default:0 }} шт.
+                        </span>
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'mainapp:inventory_update' item.id %}" class="table-form">
+                            {% csrf_token %}
+                            <input type="number" name="stock" value="{{ item.inventory.stock|default:0 }}" class="form-input table-input-small">
+                            <button type="submit" class="btn btn-gold" style="padding: 0.5rem 1rem; border-radius: 10px; font-size: 0.8rem;">📦 Обновить</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 5rem; color: #888;">
+                        <span style="font-size: 4rem; display: block; margin-bottom: 1.5rem;">📁</span>
+                        <h3>Подарки пока не созданы</h3>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Подарок: {{ item.title }} - Santa CRM{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 10px solid var(--santa-red);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+        <span class="status-badge status-{{ item.status }}" style="font-size: 1rem; padding: 0.5rem 1.2rem; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">{{ item.get_status_display }}</span>
+        <span style="color: #aaa; font-weight: 700;">АРТИКУЛ #{{ item.id }}</span>
+    </div>
+    
+    <h1 style="color: var(--santa-red); font-size: 3.5rem; margin-top: 0; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: -1px;">{{ item.title }}</h1>
+    
+    <div style="display: flex; gap: 2rem; margin-bottom: 2.5rem; color: #666; font-size: 1.1rem; border-bottom: 2px dashed #eee; padding-bottom: 1.5rem;">
+        <span>📂 <strong>{{ item.category.name|default:"Без категории" }}</strong></span>
+        <span>🧑 <strong>{{ item.created_by.username|default:"Система" }}</strong></span>
+        <span>🕒 <strong>{{ item.created_at|date:"d.m.Y H:i" }}</strong></span>
+    </div>
+    
+    <div style="margin-bottom: 3.5rem; background: #fdfdfd; padding: 2.5rem; border-radius: 12px; border: 1px solid #eee; position: relative;">
+        <span style="position: absolute; top: 1rem; left: 1rem; font-size: 2rem; opacity: 0.1;">🎄</span>
+        <h3 style="margin-top: 0; color: #333; font-size: 1.4rem;">Описание желания:</h3>
+        <p style="font-size: 1.2rem; line-height: 1.8; color: #444; white-space: pre-line;">{{ item.description|default:"Описание пока отсутствует. Нужно уточнить у оленей." }}</p>
+    </div>
+    
+    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+        <a href="{% url 'mainapp:item_update' item.pk %}" class="btn btn-primary" style="padding: 1rem 2.5rem; border-radius: 30px; font-size: 1.1rem;">✏️ Редактировать</a>
+        <a href="{% url 'mainapp:item_delete' item.pk %}" class="btn btn-gold" style="padding: 1rem 2.5rem; border-radius: 30px; font-size: 1.1rem; color: var(--santa-red);">🗑️ Удалить</a>
+        <a href="{% url 'mainapp:item_list' %}" class="btn btn-secondary" style="padding: 1rem 2.5rem; border-radius: 30px; font-size: 1.1rem; background: #eee; color: #333;">⬅️ Назад к списку</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Список писем - Santa CRM{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <h1 class="page-title">✉️ Список писем</h1>
+    {% if user.role == 'child' %}
+    <a href="{% url 'mainapp:letter_create' %}" class="btn btn-primary">✍️ Написать письмо</a>
+    {% endif %}
+</header>
+
+{% if user.role == 'helper' or user.is_superuser %}
+<div class="filter-box">
+    <form method="get" style="display: flex; gap: 1rem; align-items: flex-end;">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label>📊 Фильтр по статусу</label>
+            <select name="status" class="form-input">
+                <option value="">Все статусы</option>
+                <option value="new">Новое</option>
+                <option value="approved">Подтверждено</option>
+                <option value="rejected">Отклонено</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Применить</button>
+        <a href="{% url 'mainapp:letter_list' %}" class="btn btn-gold">Сброс</a>
+    </form>
+</div>
+{% endif %}
+
+<div class="item-grid">
+    {% for letter in letters %}
+        <div class="item-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <span class="status-badge status-{{ letter.status }}">{{ letter.get_status_display }}</span>
+                <span style="color: #aaa; font-size: 0.8rem;">✉️ #{{ letter.id }}</span>
+            </div>
+            <h3 style="margin: 0 0 1rem 0; color: var(--santa-red);">От: {{ letter.child.username }}</h3>
+            <p style="color: #666; margin-bottom: 1.5rem; flex-grow: 1;">{{ letter.content|truncatewords:20 }}</p>
+            
+            <div style="border-top: 1px solid #eee; padding-top: 1rem; margin-top: auto; display: flex; flex-direction: column; gap: 1rem;">
+                <span style="font-size: 0.8rem; color: #888;">📅 Получено: {{ letter.created_at|date:"d.m.Y H:i" }}</span>
+                
+                <div style="display: flex; gap: 0.8rem;">
+                    {% if user.role == 'helper' or user.is_superuser %}
+                        <a href="{% url 'mainapp:letter_moderate' letter.pk %}" class="btn btn-primary" style="flex: 1; text-align: center; padding: 0.6rem; font-size: 0.9rem;">Проверить</a>
+                    {% else %}
+                        <a href="#" class="btn btn-gold" style="flex: 1; text-align: center; padding: 0.6rem; font-size: 0.9rem; color: var(--santa-red);">Подробнее</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 5rem; background: white; border-radius: 12px; border-top: 5px solid var(--santa-red);">
+            <span style="font-size: 4rem; display: block; margin-bottom: 1.5rem;">❄️</span>
+            <h3>Писем пока нет</h3>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

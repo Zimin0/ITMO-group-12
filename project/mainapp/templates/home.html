@@ -1,17 +1,57 @@
 {% extends 'base.html' %}
 
-{% block title %}Главная{% endblock %}
+{% block title %}Главная - Santa CRM{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <h1>Учебный проект</h1>
-    <p>
-        Простое клиент-серверное веб-приложение на Django для управления объектами предметной области.
-    </p>
-
-    <div class="hero-buttons">
-        <a class="btn" href="/items/">Список объектов</a>
-        <a class="btn btn-secondary" href="/login/">Войти</a>
+<section class="santa-hero">
+    <h1>🎅 С возвращением в Santa CRM!</h1>
+    <p style="font-size: 1.2rem; margin-bottom: 2rem;">Ваша роль в системе: <strong>{{ user.get_role_display|default:"Гость" }}</strong></p>
+    
+    <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+        {% if user.is_authenticated %}
+            {% if user.is_superuser or user.is_staff %}
+                <a href="{% url 'mainapp:letter_list' %}" class="btn btn-primary" style="padding: 1.2rem 2.5rem; font-size: 1.1rem; border-radius: 30px;">Модерировать письма</a>
+                <a href="{% url 'mainapp:inventory_list' %}" class="btn btn-primary" style="padding: 1.2rem 2.5rem; font-size: 1.1rem; border-radius: 30px;">Склад</a>
+                <a href="{% url 'mainapp:delivery_list' %}" class="btn btn-primary" style="padding: 1.2rem 2.5rem; font-size: 1.1rem; border-radius: 30px;">Логистика</a>
+            {% elif user.role == 'child' %}
+                <a href="{% url 'mainapp:letter_create' %}" class="btn btn-primary" style="padding: 1.2rem 2.5rem; font-size: 1.1rem; border-radius: 30px;">Написать письмо Дедушке</a>
+            {% elif user.role == 'helper' %}
+                <a href="{% url 'mainapp:letter_list' %}" class="btn btn-primary" style="padding: 1.2rem 2.5rem; font-size: 1.1rem; border-radius: 30px;">Модерировать письма</a>
+            {% elif user.role == 'warehouse' %}
+                <a href="{% url 'mainapp:inventory_list' %}" class="btn btn-primary" style="padding: 1.2rem 2.5rem; font-size: 1.1rem; border-radius: 30px;">Управление складом</a>
+            {% elif user.role == 'courier' %}
+                <a href="{% url 'mainapp:delivery_list' %}" class="btn btn-primary" style="padding: 1.2rem 2.5rem; font-size: 1.1rem; border-radius: 30px;">Маршруты доставки</a>
+            {% endif %}
+            <a href="{% url 'mainapp:item_list' %}" class="btn btn-gold" style="padding: 1.2rem 2.5rem; font-size: 1.1rem; border-radius: 30px;">Список всех подарков</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary" style="padding: 1.2rem 2.5rem; font-size: 1.1rem;">Вход в систему</a>
+            <a href="{% url 'mainapp:register' %}" class="btn btn-gold" style="padding: 1.2rem 2.5rem; font-size: 1.1rem;">Регистрация</a>
+        {% endif %}
     </div>
 </section>
+
+{% if stats %}
+<div class="item-grid" style="margin-top: 3rem;">
+    <div class="card" style="text-align: center;">
+        <span style="font-size: 3rem;">✉️</span>
+        <h3>{{ stats.total_letters }}</h3>
+        <p>Всего писем в этом году</p>
+    </div>
+    <div class="card" style="text-align: center;">
+        <span style="font-size: 3rem;">✅</span>
+        <h3>{{ stats.approved_letters }}</h3>
+        <p>Писем одобрено и в работе</p>
+    </div>
+    <div class="card" style="text-align: center;">
+        <span style="font-size: 3rem;">🎁</span>
+        <h3>{{ stats.delivered_gifts }}</h3>
+        <p>Подарков уже доставлено</p>
+    </div>
+    <div class="card" style="text-align: center;">
+        <span style="font-size: 3rem;">📦</span>
+        <h3>{{ stats.warehouse_stock }}</h3>
+        <p>Остаток подарков на складе</p>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

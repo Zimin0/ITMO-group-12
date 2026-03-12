@@ -1,0 +1,147 @@
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.btn-primary {
+    background: var(--santa-red);
+    color: white;
+    box-shadow: 0 4px 15px rgba(212, 36, 38, 0.3);
+}
+
+.btn-primary:hover {
+    background: var(--santa-red-dark);
+    transform: translateY(-2px);
+}
+
+.btn-gold {
+    background: var(--gold-accent);
+    color: var(--santa-red);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.btn-gold:hover {
+    background: #FFEC8B;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: #ff4757;
+    color: white;
+}
+
+/* Cards */
+.card {
+    background: var(--snow-white);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border-top: 5px solid var(--santa-red);
+    margin-bottom: 1.5rem;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s;
+}
+
+.form-input:focus {
+    border-color: var(--santa-red);
+    outline: none;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* Headers */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 1.5rem;
+    border-left: 10px solid var(--santa-red);
+    padding-left: 2rem;
+    border-radius: 8px 0 0 8px;
+}
+
+.page-title {
+    color: var(--santa-red);
+    font-size: 2.5rem;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+/* Tables */
+.table-container {
+    background: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    border-top: 5px solid var(--gold-accent);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead tr {
+    background: var(--santa-red);
+    color: white;
+}
+
+th {
+    padding: 1.5rem;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    text-align: left;
+}
+
+td {
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+tbody tr {
+    transition: all 0.3s;
+    background: white;
+}
+
+tbody tr:hover {
+    background: #fffafa;
+}
+
+/* Badges */
+.status-badge {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}

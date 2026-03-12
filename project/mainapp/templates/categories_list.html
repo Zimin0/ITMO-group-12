@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Категории подарков - Santa CRM{% endblock %}
+
+{% block content %}
+<header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; border-bottom: 2px solid #eee; padding-bottom: 1.5rem; border-left: 10px solid var(--santa-red); padding-left: 2rem; border-radius: 8px 0 0 8px;">
+    <h1 style="color: var(--santa-red); font-size: 2.5rem; margin: 0; font-weight: 800; letter-spacing: -1px;">📂 Категории подарков</h1>
+    <a href="{% url 'mainapp:category_create' %}" class="btn btn-primary" style="padding: 1rem 2.5rem; border-radius: 30px; font-weight: 800; box-shadow: 0 4px 15px rgba(212, 36, 38, 0.3);">📂 Добавить категорию</a>
+</header>
+
+<div class="table-container" style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border-top: 5px solid var(--gold-accent);">
+    <table>
+        <thead>
+            <tr style="background: var(--santa-red); color: white;">
+                <th style="padding: 1.5rem; font-size: 1.2rem; text-transform: uppercase; font-weight: 800;">Артикул</th>
+                <th style="padding: 1.5rem; font-size: 1.2rem; text-transform: uppercase; font-weight: 800;">Название категории</th>
+                <th style="padding: 1.5rem; font-size: 1.2rem; text-transform: uppercase; font-weight: 800;">Описание</th>
+                <th style="padding: 1.5rem; font-size: 1.2rem; text-transform: uppercase; font-weight: 800; text-align: center;">Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in categories %}
+                <tr style="border-bottom: 1px solid #eee; transition: all 0.3s; background: white;">
+                    <td style="padding: 1.5rem; font-weight: 600; color: #aaa;">#{{ cat.id }}</td>
+                    <td style="padding: 1.5rem; font-weight: 800; color: var(--santa-red); font-size: 1.2rem;">{{ cat.name }}</td>
+                    <td style="padding: 1.5rem; color: #666; font-size: 1rem;">{{ cat.description|default:"—" }}</td>
+                    <td style="padding: 1.5rem; text-align: center;">
+                        <div style="display: flex; gap: 1rem; justify-content: center;">
+                            <a href="{% url 'mainapp:category_update' cat.pk %}" class="btn btn-gold" style="padding: 0.6rem 1.5rem; border-radius: 20px; font-size: 0.9rem; color: var(--santa-red); font-weight: 700;">✏️ Правка</a>
+                            <a href="{% url 'mainapp:category_delete' cat.pk %}" class="btn btn-primary" style="padding: 0.6rem 1.5rem; border-radius: 20px; font-size: 0.9rem; font-weight: 700;">🗑️ Удалить</a>
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 5rem; color: #888;">
+                        <span style="font-size: 4rem; display: block; margin-bottom: 1.5rem;">📁</span>
+                        <h3>Категории пока не созданы</h3>
+                        <p>Начните с создания первой категории, чтобы упорядочить подарки.</p>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
