@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Объекты{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <div>
+            <h1 style="margin: 0;">Объекты</h1>
+            <p style="color: #666;">Просмотр доступен всем пользователям.</p>
+        </div>
+        {% if user.is_authenticated %}
+            <a href="/admin/mainapp/item/" class="btn btn-primary">Управление через admin</a>
+        {% else %}
+            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-gold">Войти для управления</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Категория</th>
+                <th>Цена</th>
+                <th>Доступ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.category|default:"-" }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>
+                        {% if user.is_authenticated %}
+                            <span>Редактирование доступно после входа</span>
+                        {% else %}
+                            <a href="{% url 'login' %}?next={{ request.path }}">Войти</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">Объекты пока не добавлены.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
