@@ -1,0 +1,74 @@
+.santa-hero {
+    text-align: center;
+    background: linear-gradient(135deg, white, #fffafa);
+    padding: 4rem 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.santa-hero h1 {
+    color: var(--santa-red);
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.item-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--santa-red);
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+}
+
+.status-new { background: #e3f2fd; color: #1976d2; }
+.status-approved { background: #e8f5e9; color: #2e7d32; }
+.status-rejected { background: #ffebee; color: #c62828; }
+.status-delivered { background: #fffde7; color: #fbc02d; }
+
+.stock-in-stock { color: #2e7d32; font-weight: 700; font-size: 1.5rem; }
+.stock-low { color: #d32f2f; font-weight: 700; font-size: 1.5rem; }
+
+.table-form {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background: #eee;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.progress-bar {
+    height: 100%;
+}
+
+.santa-tip {
+    background: #fff8e1;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px dashed var(--gold-accent);
+}
