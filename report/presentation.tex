@@ -1,0 +1,307 @@
+\documentclass[aspectratio=169,14pt]{beamer}
+
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Times New Roman}
+\newfontfamily\russianfonttt{Times New Roman}
+\newfontfamily\russianfontsf{Times New Roman}
+\usepackage{polyglossia}
+\setdefaultlanguage{russian}
+\setotherlanguage{english}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+\usetheme{Madrid}
+\usecolortheme{whale}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\title{Доставка новогодних подарков\\(Santa CRM)}
+\subtitle{Сводные документы требований}
+\author{Зименков Н., Калачева В., Козлов Н.,\\Луценко В., Петрова В., Федоров В.}
+\institute{Университет ИТМО, К3420/К3422/К3423}
+\date{2026}
+
+\begin{document}
+
+% === Слайд 1: Титульный ===
+\begin{frame}
+\titlepage
+\end{frame}
+
+% === Слайд 2: Бизнес-требования ===
+\begin{frame}{Исходные данные и бизнес-цели}
+\textbf{Проект:} веб-приложение для автоматизации доставки новогодних подарков детям.
+
+\vspace{0.3cm}
+\textbf{Проблема:}
+\begin{itemize}
+    \item Отсутствие единой системы координации: письма, склад, доставка
+    \item Ручной процесс -- ошибки и потери
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Бизнес-цели:}
+\begin{enumerate}
+    \item Полный цикл: письмо $\to$ модерация $\to$ склад $\to$ доставка
+    \item 6 ролей пользователей с разграничением доступа
+    \item Прозрачная отчётность с экспортом в PDF
+\end{enumerate}
+\end{frame}
+
+% === Слайд 3: Видение решения и риски ===
+\begin{frame}{Видение решения и риски}
+\textbf{Решение:} клиент-серверное приложение на Django (Python)
+
+\vspace{0.3cm}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Стек:}
+\begin{itemize}
+    \item Python 3.10 + Django 5.2
+    \item SQLite
+    \item HTML/CSS
+    \item xhtml2pdf
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Основные риски:}
+\begin{itemize}
+    \item Нехватка времени на MVP
+    \item Ошибки в ролевой модели
+    \item Конфликты при слиянии веток
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% === Слайд 4: Рамки и ограничения ===
+\begin{frame}{Рамки и ограничения проекта}
+\textbf{MVP включает:}
+\begin{itemize}
+    \item Аутентификация и 6 ролей
+    \item Письма с модерацией (5 статусов)
+    \item Каталог подарков и категорий
+    \item Управление складом
+    \item Логистика (4 статуса доставки)
+    \item Отчётность + PDF-экспорт
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Исключения:} платёжная система, чат, мобильное приложение, геолокация курьеров, интернационализация.
+\end{frame}
+
+% === Слайд 5: Бизнес-контекст ===
+\begin{frame}{Бизнес-контекст: контекстная диаграмма}
+\begin{center}
+\begin{tikzpicture}[scale=0.75, transform shape,
+    actor/.style={rectangle, draw, rounded corners=3pt, minimum width=2.5cm, minimum height=0.7cm, font=\small},
+    system/.style={rectangle, draw, fill=blue!10, minimum width=3.5cm, minimum height=1.3cm, font=\bfseries},
+    db/.style={cylinder, draw, fill=gray!10, shape border rotate=90, aspect=0.2, minimum width=1.8cm, minimum height=0.9cm, font=\small},
+    arrow/.style={-{Stealth[length=2mm]}, thick}
+]
+    \node[system] (sys) {Santa CRM};
+    \node[db, right=2.2cm of sys] (db) {SQLite};
+    \node[actor, above left=1.2cm and 2.5cm of sys] (child) {Ребёнок};
+    \node[actor, left=3cm of sys] (helper) {Помощник};
+    \node[actor, below left=1.2cm and 2.5cm of sys] (warehouse) {Склад};
+    \node[actor, above right=1.2cm and 2.5cm of sys] (courier) {Курьер};
+    \node[actor, below right=1.2cm and 2.5cm of sys] (charity) {Благотв. орг.};
+    \node[actor, below=1.6cm of sys] (admin) {Администратор};
+    \draw[arrow, <->] (child) -- node[above, sloped, font=\scriptsize] {письма} (sys);
+    \draw[arrow, <->] (helper) -- node[above, font=\scriptsize] {модерация} (sys);
+    \draw[arrow, <->] (warehouse) -- node[below, sloped, font=\scriptsize] {запасы} (sys);
+    \draw[arrow, <->] (courier) -- node[above, sloped, font=\scriptsize] {доставки} (sys);
+    \draw[arrow, <->] (charity) -- node[below, sloped, font=\scriptsize] {отчёты} (sys);
+    \draw[arrow, <->] (admin) -- node[right, font=\scriptsize] {управление} (sys);
+    \draw[arrow, <->] (sys) -- node[above, font=\scriptsize] {данные} (db);
+\end{tikzpicture}
+\end{center}
+\vspace{-0.2cm}
+\small
+\textbf{Приоритеты:} P0 -- аутентификация, письма, склад; P1 -- логистика, отчёты; P2 -- каталог, админ-панель.
+\end{frame}
+
+% === Слайд 6: Общее описание SRS ===
+\begin{frame}{SRS: Операционная среда}
+\begin{table}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Компонент} & \textbf{Технология} \\
+\midrule
+Язык & Python 3.10+ \\
+Фреймворк & Django 5.2.12 \\
+СУБД & SQLite 3 \\
+Клиент & Веб-браузер \\
+Шаблоны & Django Templates + CSS \\
+PDF & xhtml2pdf \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+\textbf{Архитектура:} MVT (Model--View--Template) + сервисный слой (services.py)
+\end{frame}
+
+% === Слайд 7: Пользовательские сценарии ===
+\begin{frame}{SRS: Пользовательские сценарии}
+\small
+\begin{enumerate}
+    \item \textbf{Ребёнок:} Регистрация $\to$ Написание письма $\to$ Просмотр статуса
+    \item \textbf{Помощник:} Вход $\to$ Список писем $\to$ Модерация (одобрить/отклонить)
+    \item \textbf{Склад:} Вход $\to$ Просмотр запасов $\to$ Обновление количества
+    \item \textbf{Курьер:} Вход $\to$ Мои доставки $\to$ Обновление статуса
+    \item \textbf{Благотв. орг.:} Вход $\to$ Дашборд отчётов $\to$ Экспорт PDF
+    \item \textbf{Админ:} Полный доступ + Django Admin
+\end{enumerate}
+\end{frame}
+
+% === Слайд 8: Функции системы ===
+\begin{frame}{SRS: Функции системы}
+\small
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{13 функциональных требований:}
+\begin{itemize}
+    \item FR-1..3: Регистрация, авторизация, роли
+    \item FR-4..6: Письма, модерация, фильтр
+    \item FR-7..8: Каталог подарков/категорий
+    \item FR-9: Управление складом
+    \item FR-10: Управление доставками
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+    \item FR-11: Дашборд отчётности
+    \item FR-12: Экспорт PDF
+    \item FR-13: Админ-панель
+\end{itemize}
+\vspace{0.3cm}
+\textbf{14 URL-маршрутов}\\
+\textbf{7 Django-моделей}\\
+\textbf{7 форм}\\
+\textbf{4 сервиса}
+\end{column}
+\end{columns}
+\end{frame}
+
+% === Слайд 9: Требования к данным ===
+\begin{frame}{SRS: Модель данных (7 сущностей)}
+\begin{center}
+\begin{tikzpicture}[scale=0.7, transform shape,
+    entity/.style={rectangle, draw, fill=blue!8, minimum width=2cm, minimum height=0.8cm, font=\small\bfseries},
+    rel/.style={font=\scriptsize, fill=white, inner sep=1pt},
+    arrow/.style={-{Stealth[length=2mm]}, thick}
+]
+    \node[entity] (user) at (0,0) {User};
+    \node[entity] (letter) at (3.5,0) {Letter};
+    \node[entity] (order) at (7,0) {GiftOrder};
+    \node[entity] (delivery) at (10.5,0) {Delivery};
+    \node[entity] (category) at (0,-2.5) {Category};
+    \node[entity] (item) at (3.5,-2.5) {Item};
+    \node[entity] (inventory) at (7,-2.5) {Inventory};
+    \draw[arrow] (user) -- node[rel, above] {1 : N} node[rel, below] {\scriptsize child} (letter);
+    \draw[arrow] (letter) -- node[rel, above] {1 : 1} (order);
+    \draw[arrow] (order) -- node[rel, above] {1 : 1} (delivery);
+    \draw[arrow, dashed] (user) .. controls (1.5, 1) and (5.5, 1) .. node[rel, above] {\scriptsize moderated\_by} (letter.north);
+    \draw[arrow, dashed] (user) .. controls (3.5, 1.7) and (9, 1.7) .. node[rel, above] {\scriptsize courier} (delivery.north);
+    \draw[arrow] (category) -- node[rel, above] {1 : N} (item);
+    \draw[arrow] (item) -- node[rel, above] {1 : 1} (inventory);
+    \draw[arrow, <->] (item) -- node[rel, right] {M : N} (order);
+\end{tikzpicture}
+\end{center}
+\vspace{-0.2cm}
+\small
+\textbf{Целостность:} FK с CASCADE/SET\_NULL, уникальные поля, PositiveIntegerField, серверная валидация, автоматические даты.
+\end{frame}
+
+% === Слайд 10: Архитектура клиент-сервер ===
+\begin{frame}{SRS: Архитектура клиент-серверного взаимодействия}
+\begin{center}
+\begin{tikzpicture}[scale=0.65, transform shape,
+    block/.style={rectangle, draw, fill=blue!8, minimum width=2.4cm, minimum height=0.7cm, font=\small, text width=2.2cm, align=center},
+    arrow/.style={-{Stealth[length=2mm]}, thick}
+]
+    \node[block, fill=green!10] (browser) at (0,0) {Браузер\\(клиент)};
+    \node[block] (urlconf) at (4,0) {URLconf\\(urls.py)};
+    \node[block] (view) at (8,0) {View\\(views.py)};
+    \node[block, fill=orange!10] (auth) at (8,1.5) {Декораторы\\доступа};
+    \node[block, fill=yellow!10] (service) at (8,-1.5) {Service Layer\\(services.py)};
+    \node[block] (orm) at (12,-1.5) {Django ORM};
+    \node[block, fill=gray!15] (db) at (12,-3) {SQLite};
+    \node[block, fill=red!8] (template) at (12,0) {Template\\Engine};
+    \draw[arrow, <->] (browser) -- node[above, font=\scriptsize] {HTTP} (urlconf);
+    \draw[arrow] (urlconf) -- (view);
+    \draw[arrow, <->] (view) -- (auth);
+    \draw[arrow, <->] (view) -- (service);
+    \draw[arrow, <->] (service) -- (orm);
+    \draw[arrow, <->] (orm) -- (db);
+    \draw[arrow] (view) -- (template);
+    \draw[arrow] (template) |- node[near end, above, font=\scriptsize] {HTML} (browser);
+\end{tikzpicture}
+\end{center}
+\vspace{-0.2cm}
+\small
+\textbf{11 экранов:} главная, регистрация, вход, письма (список/форма/детали), склад, доставки, отчёты, каталог, категории.
+\end{frame}
+
+% === Слайд 11: Атрибуты качества ===
+\begin{frame}{SRS: Атрибуты качества}
+\small
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Внешние:}
+\begin{itemize}
+    \item \textbf{Usability:} адаптивный интерфейс по ролям
+    \item \textbf{Security:} хэширование паролей, CSRF, ролевой доступ
+    \item \textbf{Reliability:} серверная валидация, FK-целостность
+    \item \textbf{Performance:} select\_related, лёгкий стек
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Внутренние:}
+\begin{itemize}
+    \item \textbf{Maintainability:} разделение models/views/services/forms
+    \item \textbf{Portability:} Python + Django, кроссплатформенно
+    \item \textbf{Testability:} сервисный слой, TEST\_CHECKLIST.md
+    \item \textbf{Extensibility:} модульная архитектура Django
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% === Слайд 12: Итоги ===
+\begin{frame}{Итоги}
+\begin{center}
+\textbf{Реализовано:}
+
+\vspace{0.3cm}
+\begin{tabular}{ll}
+\toprule
+Роли пользователей & 6 \\
+Модели данных & 7 \\
+URL-маршруты & 14 \\
+Формы & 7 \\
+Сервисы & 4 \\
+Экраны & 11 \\
+Экспорт PDF & Да \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5cm}
+\textbf{Репозиторий:} \url{https://github.com/Zimin0/ITMO-group-12}
+
+\vspace{0.3cm}
+\textit{Спасибо за внимание!}
+\end{center}
+\end{frame}
+
+\end{document}

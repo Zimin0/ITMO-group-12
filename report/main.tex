@@ -1,0 +1,1049 @@
+\documentclass[14pt,a4paper]{extarticle}
+
+% Кодировка и язык (XeLaTeX)
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Helvetica}
+% monospace: use default CM font for Cyrillic compatibility
+\usepackage{polyglossia}
+\setdefaultlanguage{russian}
+\setotherlanguage{english}
+% Suppress monospace Cyrillic warnings
+\newfontfamily\russianfonttt{Times New Roman}
+
+% Поля по ГОСТу
+\usepackage[left=30mm,right=15mm,top=20mm,bottom=20mm]{geometry}
+
+% Межстрочный интервал 1.5
+\usepackage{setspace}
+\onehalfspacing
+
+% Абзацный отступ 1.25 см
+\usepackage{indentfirst}
+\setlength{\parindent}{1.25cm}
+
+% Глобальная защита от переполнения строк
+\tolerance=9000
+\emergencystretch=3em
+\hbadness=10000
+\setlength{\overfullrule}{0pt}
+
+% Изображения
+\usepackage{graphicx}
+\usepackage{float}
+
+% Таблицы
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}
+
+% Типы колонок для таблиц
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% Подписи
+\usepackage{caption}
+\captionsetup[figure]{name=Рисунок,labelsep=endash}
+\captionsetup[table]{name=Таблица,labelsep=endash}
+
+% Нумерация страниц
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+% Гиперссылки
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+
+% Диаграммы
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, fit, calc}
+
+\begin{document}
+
+% ========== ТИТУЛЬНЫЙ ЛИСТ ==========
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{center}
+
+{\bfseries Министерство науки и высшего образования Российской Федерации}
+
+\vspace{2mm}
+
+{\small\bfseries ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ АВТОНОМНОЕ ОБРАЗОВАТЕЛЬНОЕ\\
+УЧРЕЖДЕНИЕ ВЫСШЕГО ОБРАЗОВАНИЯ}
+
+\vspace{2mm}
+
+{\bfseries <<Национальный исследовательский университет ИТМО>>\\
+(Университет ИТМО)}
+
+\vspace{8mm}
+
+\begin{flushleft}
+\hspace{1.25cm}\begin{minipage}[t]{\dimexpr\textwidth-1.25cm\relax}
+\textbf{Факультет:} Инфокоммуникационных технологий
+
+\textbf{Образовательная программа:} Инфокоммуникационные системы
+
+\textbf{Направление подготовки (специальность):} Прикладное программирование в инфокоммуникационных системах
+\end{minipage}
+\end{flushleft}
+
+\vfill
+
+{\Large\bfseries ИТОГОВЫЙ ОТЧЁТ}
+
+\vspace{4mm}
+
+по дисциплине <<Создание клиент-серверных приложений>>
+
+\vspace{4mm}
+
+Тема: \textbf{Сводные документы требований к системе}
+
+\textbf{<<Доставка новогодних подарков>>}
+
+\vspace{4mm}
+
+Репозиторий: \url{https://github.com/Zimin0/ITMO-group-12}
+
+\vfill
+
+\end{center}
+
+\begin{flushright}
+Выполнили: студенты групп К3420, К3422, К3423\\[2mm]
+Зименков Никита К3423\\
+Калачева Вера К3423\\
+Козлов Никита К3422\\
+Луценко Владимир К3420\\
+Петрова Виктория К3423\\
+Федоров Владислав К3423
+
+\vspace{6mm}
+
+Проверила: доцент\\
+Войтюк Татьяна Евгеньевна
+\end{flushright}
+
+\vfill
+
+\begin{center}
+Санкт-Петербург\\
+2026
+\end{center}
+
+\end{titlepage}
+
+% ========== СОДЕРЖАНИЕ ==========
+\tableofcontents
+\newpage
+
+% ====================================================================
+%                ЧАСТЬ I. ДОКУМЕНТ О КОНЦЕПЦИИ И ГРАНИЦАХ
+% ====================================================================
+
+\section*{Часть I. Документ о концепции и границах}
+\addcontentsline{toc}{section}{Часть I. Документ о концепции и границах}
+
+\section{Бизнес-требования}
+
+\subsection{Исходные данные}
+
+\subsubsection{Общее описание проекта}
+
+Проект <<Доставка новогодних подарков>> (Santa CRM) представляет собой клиент-серверное веб-приложение для автоматизации процесса сбора, обработки и доставки новогодних подарков детям. Система охватывает полный цикл от получения письма ребёнка Деду Морозу до вручения подарка курьером.
+
+Проект выполняется в рамках дисциплины <<Создание клиент-серверных приложений>> (7--8 семестры) командой из шести студентов.
+
+Актуальность обусловлена необходимостью координации множества участников процесса доставки подарков: детей, помощников Деда Мороза, складских работников, курьеров и благотворительных организаций.
+
+\subsubsection{Анализ предметной области}
+
+Система ориентирована на автоматизацию благотворительной деятельности в период новогодних праздников. Роли пользователей и их функции описаны в таблице~\ref{tab:roles}.
+
+\begin{table}[H]
+\centering
+\caption{Роли пользователей системы}
+\label{tab:roles}
+\small
+\begin{tabular}{|L{3.5cm}|L{9.5cm}|}
+\hline
+\textbf{Роль} & \textbf{Функции} \\
+\hline
+Ребёнок & Написание писем Деду Морозу, просмотр статуса своих писем \\
+\hline
+Помощник Деда Мороза & Модерация писем (одобрение/отклонение), просмотр отчётов \\
+\hline
+Складская служба & Управление запасами подарков, обновление количества на складе \\
+\hline
+Курьер & Просмотр назначенных доставок, обновление статуса доставки \\
+\hline
+Благотворительная организация & Просмотр отчётов и статистики \\
+\hline
+Администратор & Полный доступ ко всем функциям, управление через Django Admin \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Возможности бизнеса}
+
+Система решает следующие задачи:
+\begin{itemize}
+    \item централизация процесса сбора и обработки детских писем;
+    \item автоматизация управления складом подарков;
+    \item координация доставки с отслеживанием статусов;
+    \item формирование отчётности для благотворительных организаций;
+    \item экспорт отчётов в формате PDF.
+\end{itemize}
+
+Потенциальные потребители: благотворительные фонды, муниципальные организации, волонтёрские объединения.
+
+\subsection{Бизнес-цели}
+
+\begin{enumerate}
+    \item Разработать MVP клиент-серверного приложения, охватывающего полный цикл от получения письма до доставки подарка.
+    \item Реализовать ролевую модель доступа с шестью типами пользователей.
+    \item Обеспечить прозрачную отчётность по всем этапам процесса.
+    \item Обеспечить возможность экспорта данных в PDF для внешних стейкхолдеров.
+\end{enumerate}
+
+Целевые показатели MVP: поддержка 6 ролей, обработка писем с 5 статусами жизненного цикла, управление заказами с 6 статусами, логистика с 4 статусами доставки.
+
+\subsection{Критерии успеха}
+
+\begin{itemize}
+    \item полнота реализации основного функционала (письма, склад, логистика, отчётность);
+    \item корректная работа ролевой модели доступа;
+    \item успешная демонстрация всех пользовательских сценариев;
+    \item стабильная работа клиент-серверного взаимодействия;
+    \item наличие сервисного слоя для бизнес-логики.
+\end{itemize}
+
+\subsection{Видение решения}
+
+Система <<Доставка новогодних подарков>> -- веб-приложение с клиент-серверной архитектурой, реализованное на фреймворке Django. Сервер обрабатывает HTTP-запросы, управляет данными через ORM и возвращает HTML-страницы. Клиент взаимодействует с сервером через браузер.
+
+Основной сценарий работы:
+\begin{enumerate}
+    \item Ребёнок регистрируется и пишет письмо Деду Морозу.
+    \item Помощник модерирует письмо (одобряет или отклоняет).
+    \item На основе одобренного письма формируется заказ подарков.
+    \item Складская служба комплектует заказ.
+    \item Курьер получает назначение и доставляет подарок.
+    \item Благотворительные организации и администратор отслеживают статистику.
+\end{enumerate}
+
+\subsection{Риски проекта}
+
+\begin{table}[H]
+\centering
+\caption{Риски проекта}
+\label{tab:risks}
+\small
+\begin{tabular}{|L{3.5cm}|C{2cm}|C{2cm}|L{5cm}|}
+\hline
+\textbf{Риск} & \textbf{Вероят\-ность} & \textbf{Влияние} & \textbf{Меры митигации} \\
+\hline
+Нехватка времени на реализацию & Средняя & Высокое & Приоритизация MVP, итеративная разработка \\
+\hline
+Ошибки в ролевой модели доступа & Низкая & Высокое & Тестирование доступа для каждой роли \\
+\hline
+Потеря данных (SQLite) & Низкая & Среднее & Резервное копирование, миграции Django \\
+\hline
+Конфликты при слиянии веток & Средняя & Низкое & Код-ревью, ветка dev для интеграции \\
+\hline
+Некорректная генерация PDF & Низкая & Низкое & Тестирование шаблонов xhtml2pdf \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Предположения и зависимости}
+
+Предположения: пользователи имеют доступ к веб-браузеру; количество одновременных пользователей не превышает нескольких десятков; данные хранятся локально в SQLite.
+
+Зависимости: Python 3.10+, Django 5.2.12, xhtml2pdf, встроенная система аутентификации Django.
+
+\newpage
+
+\section{Рамки и ограничения проекта}
+
+\subsection{Контекстная диаграмма}
+
+На рисунке~\ref{fig:context} представлена контекстная диаграмма системы.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.95, transform shape,
+    actor/.style={rectangle, draw, rounded corners=3pt, minimum width=3cm, minimum height=0.8cm, font=\small},
+    system/.style={rectangle, draw, fill=blue!10, minimum width=4cm, minimum height=1.5cm, font=\bfseries},
+    db/.style={cylinder, draw, fill=gray!10, shape border rotate=90, aspect=0.2, minimum width=2cm, minimum height=1cm, font=\small},
+    arrow/.style={-{Stealth[length=2mm]}, thick},
+    every node/.style={font=\small}
+]
+    % Центральная система
+    \node[system] (sys) {Santa CRM};
+    \node[db, right=2.5cm of sys] (db) {SQLite};
+
+    % Акторы
+    \node[actor, above left=1.5cm and 3cm of sys] (child) {Ребёнок};
+    \node[actor, left=3.5cm of sys] (helper) {Помощник};
+    \node[actor, below left=1.5cm and 3cm of sys] (warehouse) {Склад};
+    \node[actor, above right=1.5cm and 3cm of sys] (courier) {Курьер};
+    \node[actor, below right=1.5cm and 3cm of sys] (charity) {Благотв. орг.};
+    \node[actor, below=2cm of sys] (admin) {Администратор};
+
+    % Стрелки
+    \draw[arrow, <->] (child) -- node[above, sloped, font=\scriptsize] {письма} (sys);
+    \draw[arrow, <->] (helper) -- node[above, font=\scriptsize] {модерация} (sys);
+    \draw[arrow, <->] (warehouse) -- node[below, sloped, font=\scriptsize] {запасы} (sys);
+    \draw[arrow, <->] (courier) -- node[above, sloped, font=\scriptsize] {доставки} (sys);
+    \draw[arrow, <->] (charity) -- node[below, sloped, font=\scriptsize] {отчёты} (sys);
+    \draw[arrow, <->] (admin) -- node[right, font=\scriptsize] {управление} (sys);
+    \draw[arrow, <->] (sys) -- node[above, font=\scriptsize] {данные} (db);
+\end{tikzpicture}
+\caption{Контекстная диаграмма системы}
+\label{fig:context}
+\end{figure}
+
+Каждая внешняя сущность взаимодействует с системой через веб-интерфейс (HTTP-запросы к серверу Django). Сервер обрабатывает запросы, обращается к базе данных SQLite и возвращает HTML-ответы.
+
+\subsection{Дерево функций}
+
+Основные функциональные блоки системы:
+\begin{enumerate}
+    \item \textbf{Аутентификация и авторизация}: регистрация, вход, выход, ролевой доступ.
+    \item \textbf{Управление письмами}: создание (ребёнок), просмотр, модерация (помощник/админ), фильтрация.
+    \item \textbf{Каталог подарков}: просмотр списка подарков и категорий.
+    \item \textbf{Управление складом}: просмотр запасов, обновление количества.
+    \item \textbf{Логистика}: просмотр доставок, обновление статуса, фиксация даты вручения.
+    \item \textbf{Отчётность}: дашборд со статистикой, экспорт в PDF.
+    \item \textbf{Администрирование}: Django Admin для управления всеми сущностями.
+\end{enumerate}
+
+\subsection{Список событий системы}
+
+\begin{table}[H]
+\centering
+\caption{События системы}
+\label{tab:events}
+\small
+\begin{tabular}{|C{0.7cm}|L{3.5cm}|L{8.5cm}|}
+\hline
+\textbf{ID} & \textbf{Событие} & \textbf{Реакция системы} \\
+\hline
+E1 & Регистрация & Создание учётной записи с ролью, автоматический вход \\
+\hline
+E2 & Авторизация & Создание сессии, отображение интерфейса по роли \\
+\hline
+E3 & Создание письма & Сохранение со статусом <<Новое>> \\
+\hline
+E4 & Модерация письма & Смена статуса на <<Одобрено>>/<<Отклонено>> \\
+\hline
+E5 & Просмотр каталога & Отображение списка подарков/категорий \\
+\hline
+E6 & Обновление запасов & Изменение количества товара на складе \\
+\hline
+E7 & Обновление доставки & Смена статуса, при <<Доставлено>> фиксация даты \\
+\hline
+E8 & Просмотр отчётов & Формирование статистики из БД \\
+\hline
+E9 & Экспорт PDF & Генерация PDF через xhtml2pdf \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Состав выпусков}
+
+\textbf{MVP (текущий выпуск):} регистрация/аутентификация с 6 ролями; письма с модерацией (5 статусов); каталог подарков и категорий; управление складскими запасами; логистика (4 статуса); дашборд с экспортом в PDF; панель администратора.
+
+\textbf{Возможный второй выпуск:} автоматическое формирование заказов; уведомления по email; миграция на PostgreSQL; REST API для мобильного клиента.
+
+\subsection{Ограничения и исключения}
+
+Ограничения MVP: только веб-интерфейс, SQLite (ограничения параллельного доступа), нет интеграции с внешними сервисами, сервер разработки Django, интерфейс только на русском.
+
+Исключения: платёжная система, чат между пользователями, геолокация курьеров, интеграция с внешними складскими системами.
+
+\newpage
+
+\section{Бизнес-контекст}
+
+\subsection{Профили заинтересованных лиц}
+
+\begin{table}[H]
+\centering
+\caption{Заинтересованные лица}
+\label{tab:stakeholders}
+\small
+\begin{tabular}{|L{3cm}|L{4.5cm}|L{5cm}|}
+\hline
+\textbf{Стейкхолдер} & \textbf{Интересы} & \textbf{Влияние на проект} \\
+\hline
+Ребёнок & Удобная отправка письма & Основной пользователь \\
+\hline
+Помощник & Удобная модерация & Контроль качества данных \\
+\hline
+Склад. служба & Актуальная информация & Обеспечение наличия подарков \\
+\hline
+Курьер & Чёткие задания & Вручение подарка \\
+\hline
+Благотв. орг. & Прозрачная отчётность & Финансирование, контроль \\
+\hline
+Администратор & Стабильная работа & Технические решения \\
+\hline
+Преподаватель & Соответствие требованиям & Оценка проекта \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Персона пользователя}
+
+\begin{table}[H]
+\centering
+\caption{Персона: Ребёнок}
+\label{tab:persona_child}
+\small
+\begin{tabular}{|L{3.5cm}|L{9cm}|}
+\hline
+Имя & Маша \\
+\hline
+Возраст & 8 лет \\
+\hline
+Город & Санкт-Петербург \\
+\hline
+Цель & Написать письмо Деду Морозу \\
+\hline
+Ожидания & Простая форма, понятный интерфейс \\
+\hline
+Опасения & Письмо не дойдёт \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Персона: Помощник Деда Мороза}
+\label{tab:persona_helper}
+\small
+\begin{tabular}{|L{3.5cm}|L{9cm}|}
+\hline
+Имя & Алексей \\
+\hline
+Возраст & 25 лет \\
+\hline
+Роль & Волонтёр, модерирует письма \\
+\hline
+Цель & Быстро обрабатывать входящие письма \\
+\hline
+Ожидания & Фильтрация по статусу \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Приоритеты проекта}
+
+\begin{table}[H]
+\centering
+\caption{Приоритеты функциональности}
+\label{tab:priorities}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|C{1.2cm}|L{5.6cm}|L{5.2cm}|}
+\hline
+\textbf{Приор.} & \textbf{Функциональность} & \textbf{Обоснование} \\
+\hline
+P0 & Аутентификация и ролевой доступ & Основа безопасности \\
+\hline
+P0 & Письма с модерацией & Ядро бизнес-логики \\
+\hline
+P0 & Управление складом & Обеспечение наличия подарков \\
+\hline
+P1 & Логистика доставки & Завершение цикла \\
+\hline
+P1 & Отчётность и PDF-экспорт & Прозрачность для стейкхолдеров \\
+\hline
+P2 & Каталог и админ-панель & Справочная информация \\
+\hline
+\end{tabular}}
+\end{table}
+
+\newpage
+
+% ====================================================================
+%          ЧАСТЬ II. СПЕЦИФИКАЦИЯ ТРЕБОВАНИЙ К ПО (SRS)
+% ====================================================================
+
+\section*{Часть II. Спецификация требований к ПО}
+\addcontentsline{toc}{section}{Часть II. Спецификация требований к ПО (SRS)}
+
+\section{Общее описание}
+
+\subsection{Операционная среда}
+
+\begin{table}[H]
+\centering
+\caption{Операционная среда}
+\label{tab:env}
+\small
+\begin{tabular}{|L{4cm}|L{9cm}|}
+\hline
+\textbf{Компонент} & \textbf{Описание} \\
+\hline
+Язык & Python 3.10+ \\
+\hline
+Фреймворк & Django 5.2.12 \\
+\hline
+СУБД & SQLite 3 \\
+\hline
+Сервер & Django development server \\
+\hline
+Клиент & Веб-браузер \\
+\hline
+ОС & Кроссплатформенная \\
+\hline
+Библиотеки & xhtml2pdf (PDF-отчёты) \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Выбор средств реализации}
+
+\textbf{Django} выбран благодаря встроенной системе аутентификации с кастомной моделью пользователя, ORM для работы с БД, системе миграций, шаблонному движку и админ-панели.
+
+\textbf{SQLite} выбрана для MVP из-за простоты развёртывания (не требуется отдельный сервер БД).
+
+\textbf{Архитектура} построена по паттерну MVT (Model--View--Template) с дополнительным сервисным слоем (services.py) для бизнес-логики.
+
+\subsection{Пользовательские сценарии}
+
+\subsubsection{UC-1: Регистрация пользователя}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{|L{3cm}|L{10cm}|}
+\hline
+Название & Регистрация нового пользователя \\
+\hline
+Актёр & Незарегистрированный пользователь \\
+\hline
+Предусловие & Пользователь не авторизован \\
+\hline
+Основной поток & 1. Открывает /register/. 2. Заполняет форму (логин, пароль, роль, телефон, адрес). 3. Нажимает <<Зарегистрироваться>>. 4. Система создаёт аккаунт и выполняет вход. \\
+\hline
+Постусловие & Пользователь авторизован \\
+\hline
+Исключения & Логин уже занят \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{UC-2: Написание письма Деду Морозу}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{|L{3cm}|L{10cm}|}
+\hline
+Актёр & Ребёнок \\
+\hline
+Предусловие & Авторизован с ролью <<Ребёнок>> \\
+\hline
+Основной поток & 1. Нажимает <<Написать письмо>>. 2. Заполняет текст. 3. Отправляет. 4. Система сохраняет со статусом <<Новое>>. \\
+\hline
+Постусловие & Письмо в списке писем ребёнка \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{UC-3: Модерация письма}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{|L{3cm}|L{10cm}|}
+\hline
+Актёр & Помощник / Администратор \\
+\hline
+Предусловие & Есть письма со статусом <<Новое>> \\
+\hline
+Основной поток & 1. Открывает список писем. 2. Выбирает письмо. 3. Читает содержание. 4. Одобряет или отклоняет. 5. Система обновляет статус. \\
+\hline
+Постусловие & Статус изменён, модератор зафиксирован \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{UC-4: Управление складом}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{|L{3cm}|L{10cm}|}
+\hline
+Актёр & Складская служба / Администратор \\
+\hline
+Основной поток & 1. Открывает страницу склада. 2. Видит товары с количеством. 3. Вводит новое количество. 4. Система сохраняет. \\
+\hline
+Постусловие & Количество на складе обновлено \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{UC-5: Обновление статуса доставки}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{|L{3cm}|L{10cm}|}
+\hline
+Актёр & Курьер / Администратор \\
+\hline
+Основной поток & 1. Открывает список доставок. 2. Обновляет статус (<<В пути>>, <<Доставлено>>, <<Не удалось>>). 3. При <<Доставлено>> фиксируется дата. \\
+\hline
+Постусловие & Статус доставки обновлён \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{UC-6: Просмотр отчётов и экспорт PDF}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{|L{3cm}|L{10cm}|}
+\hline
+Актёр & Администратор / Помощник / Благотв. орг. \\
+\hline
+Основной поток & 1. Открывает отчёты. 2. Видит дашборд (кол-во писем, заказов, доставок, разбивка по статусам и категориям). 3. Нажимает <<Экспорт PDF>>. 4. Получает файл. \\
+\hline
+Постусловие & PDF-отчёт скачан \\
+\hline
+\end{tabular}
+\end{table}
+
+\newpage
+
+\section{Функции системы и варианты использования}
+
+\subsection{Функциональные требования}
+
+\begin{table}[H]
+\centering
+\caption{Функциональные требования}
+\label{tab:func_req}
+\small
+\begin{tabular}{|C{0.8cm}|L{4cm}|L{8cm}|}
+\hline
+\textbf{ID} & \textbf{Требование} & \textbf{Описание} \\
+\hline
+FR-1 & Регистрация & Форма с выбором роли (кроме Admin), автовход \\
+\hline
+FR-2 & Аутентификация & Вход/выход через Django auth \\
+\hline
+FR-3 & Ролевой доступ & Разграничение по ролям (декоратор role\_required) \\
+\hline
+FR-4 & Создание письма & Форма для текста, привязка к ребёнку \\
+\hline
+FR-5 & Модерация писем & Одобрение/отклонение, запись модератора \\
+\hline
+FR-6 & Фильтрация писем & Фильтр по статусу (GET-параметр) \\
+\hline
+FR-7 & Каталог подарков & Список с категорией и ценой \\
+\hline
+FR-8 & Каталог категорий & Список с описанием \\
+\hline
+FR-9 & Управление запасами & Просмотр/обновление количества \\
+\hline
+FR-10 & Управление доставками & Список доставок, смена статуса \\
+\hline
+FR-11 & Дашборд отчётности & Статистика по письмам, заказам, доставкам \\
+\hline
+FR-12 & Экспорт PDF & Генерация через xhtml2pdf \\
+\hline
+FR-13 & Админ-панель & Django Admin \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Матрица <<Роль -- Функция>>}
+
+\begin{table}[H]
+\centering
+\caption{Матрица доступа}
+\label{tab:access_matrix}
+\small
+\begin{tabular}{|L{2.8cm}|C{1.2cm}|C{1.2cm}|C{1.2cm}|C{1.2cm}|C{1.2cm}|C{1.2cm}|}
+\hline
+\textbf{Функция} & \rotatebox{90}{\small\textbf{Ребёнок}} & \rotatebox{90}{\small\textbf{Помощник}} & \rotatebox{90}{\small\textbf{Склад}} & \rotatebox{90}{\small\textbf{Курьер}} & \rotatebox{90}{\small\textbf{Благотв.}} & \rotatebox{90}{\small\textbf{Админ}} \\
+\hline
+Регистрация & + & + & + & + & + & -- \\
+\hline
+Создание письма & + & & & & & \\
+\hline
+Модерация & & + & & & & + \\
+\hline
+Склад & & & + & & & + \\
+\hline
+Доставки & & + & & + & & + \\
+\hline
+Отчёты & & + & & & + & + \\
+\hline
+Каталог & + & + & + & + & + & + \\
+\hline
+Админ-панель & & & & & & + \\
+\hline
+\end{tabular}
+\end{table}
+
+\newpage
+
+\section{Требования к данным}
+
+\subsection{Логическая модель данных}
+
+Система содержит 7 основных сущностей, связанных через Django ORM. ER-диаграмма представлена на рисунке~\ref{fig:erd}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    entity/.style={rectangle, draw, fill=blue!8, minimum width=2.2cm, minimum height=0.9cm, font=\small\bfseries},
+    rel/.style={font=\scriptsize, fill=white, inner sep=1pt},
+    arrow/.style={-{Stealth[length=2mm]}, thick},
+    every node/.style={font=\small}
+]
+    % Сущности - верхний ряд
+    \node[entity] (user) at (0,0) {User};
+    \node[entity] (letter) at (4,0) {Letter};
+    \node[entity] (order) at (8,0) {GiftOrder};
+    \node[entity] (delivery) at (12,0) {Delivery};
+
+    % Сущности - нижний ряд
+    \node[entity] (category) at (0,-3) {Category};
+    \node[entity] (item) at (4,-3) {Item};
+    \node[entity] (inventory) at (8,-3) {Inventory};
+
+    % Связи - верхний ряд
+    \draw[arrow] (user) -- node[rel, above] {1 : N} node[rel, below] {\scriptsize child} (letter);
+    \draw[arrow] (letter) -- node[rel, above] {1 : 1} (order);
+    \draw[arrow] (order) -- node[rel, above] {1 : 1} (delivery);
+
+    % User -> Letter (moderated_by) и User -> Delivery (courier)
+    \draw[arrow, dashed] (user) .. controls (2, 1.2) and (6, 1.2) .. node[rel, above] {\scriptsize moderated\_by} (letter.north);
+    \draw[arrow, dashed] (user) .. controls (4, 2) and (10, 2) .. node[rel, above] {\scriptsize courier} (delivery.north);
+
+    % Связи - нижний ряд
+    \draw[arrow] (category) -- node[rel, above] {1 : N} (item);
+    \draw[arrow] (item) -- node[rel, above] {1 : 1} (inventory);
+
+    % M:N между Item и GiftOrder
+    \draw[arrow, <->] (item) -- node[rel, right] {M : N} (order);
+\end{tikzpicture}
+\caption{ER-диаграмма (логическая модель данных)}
+\label{fig:erd}
+\end{figure}
+
+\subsection{Словарь данных}
+
+\begin{table}[H]
+\centering
+\caption{Модель User}
+\label{tab:dict_user}
+\small
+\begin{tabular}{|L{2.2cm}|L{2.5cm}|L{3cm}|L{4.8cm}|}
+\hline
+\textbf{Поле} & \textbf{Тип} & \textbf{Ограничения} & \textbf{Описание} \\
+\hline
+id & integer & PK, auto & Первичный ключ \\
+\hline
+username & varchar(150) & unique, not null & Имя пользователя \\
+\hline
+password & varchar(128) & not null & Хэш пароля \\
+\hline
+role & varchar(20) & choices, default=child & child, helper, courier, warehouse, charity, admin \\
+\hline
+phone & varchar(20) & blank & Телефон \\
+\hline
+address & text & blank & Адрес \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Модель Letter}
+\label{tab:dict_letter}
+\small
+\begin{tabular}{|L{2.5cm}|L{2.5cm}|L{3cm}|L{4.5cm}|}
+\hline
+\textbf{Поле} & \textbf{Тип} & \textbf{Ограничения} & \textbf{Описание} \\
+\hline
+id & integer & PK, auto & Первичный ключ \\
+\hline
+child\_id & integer & FK $\to$ User & Автор письма \\
+\hline
+content & text & not null & Текст письма \\
+\hline
+status & varchar(20) & choices & new, approved, rejected, processing, completed \\
+\hline
+created\_at & datetime & auto\_now\_add & Дата создания \\
+\hline
+moderated\_by & integer & FK $\to$ User, null & Модератор \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Модель Item}
+\label{tab:dict_item}
+\small
+\begin{tabular}{|L{2.5cm}|L{2.5cm}|L{3cm}|L{4.5cm}|}
+\hline
+\textbf{Поле} & \textbf{Тип} & \textbf{Ограничения} & \textbf{Описание} \\
+\hline
+id & integer & PK, auto & Первичный ключ \\
+\hline
+title & varchar(200) & not null & Название подарка \\
+\hline
+description & text & blank & Описание \\
+\hline
+category\_id & integer & FK $\to$ Category & Категория \\
+\hline
+price & decimal(10,2) & default=0 & Условная стоимость \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Модели Inventory, GiftOrder, Delivery}
+\label{tab:dict_other}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|L{3cm}|L{2cm}|L{2.4cm}|L{4.5cm}|}
+\hline
+\textbf{Модель.Поле} & \textbf{Тип} & \textbf{Ограничения} & \textbf{Описание} \\
+\hline
+Inventory.item & integer & 1:1 $\to$ Item & Товар \\
+\hline
+Inventory.stock & integer & $\geq 0$ & Кол-во на складе \\
+\hline
+Inventory.\-reserved & integer & $\geq 0$ & Зарезервировано \\
+\hline
+GiftOrder.letter & integer & 1:1 $\to$ Letter & Связанное письмо \\
+\hline
+GiftOrder.items & M2M & $\to$ Item & Подарки в заказе \\
+\hline
+GiftOrder.status & varchar(20) & choices & 6 статусов \\
+\hline
+Delivery.order & integer & 1:1 $\to$ GiftOrder & Связанный заказ \\
+\hline
+Delivery.courier & integer & FK $\to$ User & Курьер \\
+\hline
+Delivery.status & varchar(20) & choices & 4 статуса \\
+\hline
+Delivery.route\-\_data & JSON & null, blank & Данные маршрута \\
+\hline
+Delivery.\-delivered\_at & datetime & null & Дата вручения \\
+\hline
+\end{tabular}}
+\end{table}
+
+\subsection{Отчётность}
+
+Система формирует статистический отчёт: общее количество писем, подарков, категорий, заказов, доставок; разбивку писем по статусам; количество товаров по категориям; дату формирования. Доступно в HTML (дашборд) и PDF (экспорт через xhtml2pdf).
+
+\subsection{Обеспечение целостности данных}
+
+\begin{itemize}
+    \item \textbf{Ссылочная целостность}: внешние ключи с CASCADE или SET\_NULL;
+    \item \textbf{Уникальность}: username (User), name (Category);
+    \item \textbf{Валидация}: Django Forms (серверная);
+    \item \textbf{Неотрицательность}: PositiveIntegerField для запасов;
+    \item \textbf{Автоматические поля}: auto\_now\_add, auto\_now;
+    \item \textbf{Транзакции}: Django ORM оборачивает операции в транзакции.
+\end{itemize}
+
+\newpage
+
+\section{Требования к внешним интерфейсам}
+
+\subsection{Пользовательские интерфейсы}
+
+Интерфейс реализован через Django Templates и CSS. Основные экраны:
+
+\begin{enumerate}
+    \item \textbf{Главная} (home.html) -- роль пользователя, навигация по ролям, статистика.
+    \item \textbf{Регистрация} (register.html) -- логин, пароль, роль, телефон, адрес.
+    \item \textbf{Вход} (login.html) -- стандартная форма Django.
+    \item \textbf{Письма} -- список с фильтром, форма создания, детали с модерацией.
+    \item \textbf{Склад} (inventory.html) -- товары с остатком, форма обновления.
+    \item \textbf{Доставки} (delivery\_list.html) -- список с обновлением статуса.
+    \item \textbf{Отчёты} (dashboard.html) -- дашборд + кнопка экспорта PDF.
+    \item \textbf{Каталог} -- подарки и категории.
+\end{enumerate}
+
+Навигация через верхнюю панель: Главная, Объекты, Категории, Admin, Вход/Выход.
+
+\subsection{Программные интерфейсы}
+
+\begin{table}[H]
+\centering
+\caption{URL-маршруты системы}
+\label{tab:urls}
+\small
+\begin{tabular}{|L{5cm}|C{1.5cm}|L{5.5cm}|}
+\hline
+\textbf{URL} & \textbf{Метод} & \textbf{Описание} \\
+\hline
+/ & GET & Главная \\
+\hline
+/register/ & GET, POST & Регистрация \\
+\hline
+/login/, /logout/ & GET, POST & Вход/выход \\
+\hline
+/letters/ & GET & Список писем \\
+\hline
+/letters/create/ & GET, POST & Создание письма \\
+\hline
+/letters/<pk>/moderate/ & GET, POST & Модерация \\
+\hline
+/warehouse/ & GET & Склад \\
+\hline
+/warehouse/<id>/update/ & POST & Обновление запасов \\
+\hline
+/logistics/ & GET & Доставки \\
+\hline
+/logistics/<pk>/status/ & POST & Обновление статуса \\
+\hline
+/reports/ & GET & Отчёты \\
+\hline
+/reports/export/ & GET & Экспорт PDF \\
+\hline
+/items/, /categories/ & GET & Каталог \\
+\hline
+/admin/ & GET & Админ-панель \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Архитектура взаимодействия клиента и сервера}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    block/.style={rectangle, draw, fill=blue!8, minimum width=2.8cm, minimum height=0.8cm, font=\small, text width=2.6cm, align=center},
+    arrow/.style={-{Stealth[length=2mm]}, thick},
+    every node/.style={font=\small}
+]
+    % Клиент
+    \node[block, fill=green!10] (browser) at (0,0) {Браузер\\(клиент)};
+
+    % Сервер
+    \node[block] (urlconf) at (4.5,0) {URLconf\\(urls.py)};
+    \node[block] (view) at (9,0) {View\\(views.py)};
+    \node[block, fill=orange!10] (auth) at (9,1.8) {Декораторы\\доступа};
+    \node[block, fill=yellow!10] (service) at (9,-1.8) {Service Layer\\(services.py)};
+    \node[block] (orm) at (13.5,-1.8) {Django ORM};
+    \node[block, fill=gray!15] (db) at (13.5,-3.6) {SQLite};
+    \node[block, fill=red!8] (template) at (13.5,0) {Template\\Engine};
+
+    % Стрелки
+    \draw[arrow, <->] (browser) -- node[above, font=\scriptsize] {HTTP} (urlconf);
+    \draw[arrow] (urlconf) -- (view);
+    \draw[arrow, <->] (view) -- (auth);
+    \draw[arrow, <->] (view) -- (service);
+    \draw[arrow, <->] (service) -- (orm);
+    \draw[arrow, <->] (orm) -- (db);
+    \draw[arrow] (view) -- (template);
+    \draw[arrow] (template) |- node[near end, above, font=\scriptsize] {HTML} (browser);
+\end{tikzpicture}
+\caption{Архитектура клиент-серверного взаимодействия}
+\label{fig:architecture}
+\end{figure}
+
+\newpage
+
+\section{Атрибуты качества}
+
+\subsection{Внешние атрибуты качества}
+
+\begin{table}[H]
+\centering
+\caption{Внешние атрибуты качества}
+\label{tab:ext_quality}
+\small
+\begin{tabular}{|L{3.8cm}|L{9cm}|}
+\hline
+\textbf{Атрибут} & \textbf{Описание и реализация} \\
+\hline
+Удобство использования (Usability) & Интерфейс адаптируется к роли пользователя: главная страница показывает только релевантные действия. Django messages информируют о результатах. \\
+\hline
+Функциональная пригодность & Полный цикл обработки: письмо, модерация, заказ, склад, доставка, отчёт. Все 6 ролей имеют свой функционал. \\
+\hline
+Надёжность (Reliability) & Серверная валидация форм. Ролевой доступ. Внешние ключи с каскадным удалением обеспечивают целостность. \\
+\hline
+Производительность (Performance) & Использование select\_related в сервисном слое для минимизации SQL-запросов. Лёгкий стек для учебного масштаба. \\
+\hline
+Безопасность (Security) & Хэширование паролей, CSRF-защита, ролевой доступ, роль Admin исключена из регистрации. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Внутренние атрибуты качества}
+
+\begin{table}[H]
+\centering
+\caption{Внутренние атрибуты качества}
+\label{tab:int_quality}
+\small
+\begin{tabular}{|L{3.8cm}|L{9cm}|}
+\hline
+\textbf{Атрибут} & \textbf{Описание и реализация} \\
+\hline
+Сопровождаемость (Maintainability) & Разделение ответственности: models.py, views.py, services.py, forms.py, templates/. Единообразное именование. \\
+\hline
+Переносимость (Portability) & Кроссплатформенный стек (Python + Django). Зависимости зафиксированы в requirements.txt. \\
+\hline
+Тестируемость (Testability) & Сервисный слой изолирует бизнес-логику от представления. Контрольный список тестов в TEST\_CHECKLIST.md. \\
+\hline
+Расширяемость (Extensibility) & Модульная архитектура Django. Миграции поддерживают эволюцию схемы БД. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Интернационализация}
+
+В текущей версии система поддерживает только русский язык. Архитектура допускает i18n: Django имеет встроенную поддержку через gettext, все строки вынесены в шаблоны и verbose\_name моделей.
+
+\newpage
+
+\section*{Заключение}
+\addcontentsline{toc}{section}{Заключение}
+
+В рамках практической работы разработан итоговый отчёт, включающий документ о концепции и границах системы <<Доставка новогодних подарков>> и спецификацию требований к программному обеспечению.
+
+Система реализована как клиент-серверное веб-приложение на Django 5.2.12. Реализован полный цикл обработки от создания писем до доставки подарков. Поддерживаются шесть ролей пользователей. Архитектура следует паттерну MVT с сервисным слоем. База данных содержит 7 сущностей. PDF-отчёты генерируются через xhtml2pdf.
+
+Исходный код: \url{https://github.com/Zimin0/ITMO-group-12}.
+
+Видеодемонстрация: \url{https://drive.google.com/drive/folders/1TdcRUdQAou28KZtcZnhB0-76Mlh_jUlx?usp=sharing}.
+
+\newpage
+
+\section*{Список литературы}
+\addcontentsline{toc}{section}{Список литературы}
+
+\begin{enumerate}
+    \item Вигерс К., Битти Дж. Разработка требований к программному обеспечению. 3-е изд. М.: Русская редакция, 2014. 736~с.
+    \item Django Documentation. URL: \nolinkurl{https://docs.djangoproject.com/en/5.2/} (дата обращения: 15.03.2026).
+    \item IEEE Std 830-1998. Recommended Practice for Software Requirements Specifications.
+    \item xhtml2pdf Documentation. URL: \nolinkurl{https://xhtml2pdf.readthedocs.io/} (дата обращения: 15.03.2026).
+\end{enumerate}
+
+\end{document}
