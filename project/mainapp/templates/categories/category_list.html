@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Категории - Santa CRM{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <h1 class="page-title">📂 Категории подарков</h1>
+</header>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Артикул</th>
+                <th>Название категории</th>
+                <th>Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in categories %}
+                <tr>
+                    <td style="font-weight: 600; color: #aaa;">#{{ cat.id }}</td>
+                    <td style="font-weight: 800; color: var(--santa-red); font-size: 1.2rem;">{{ cat.name }}</td>
+                    <td>{{ cat.description|default:"—" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 5rem; color: #888;">
+                        <span style="font-size: 4rem; display: block; margin-bottom: 1.5rem;">📁</span>
+                        <h3>Категории пока не созданы</h3>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

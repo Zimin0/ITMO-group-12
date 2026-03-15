@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Список подарков - Santa CRM{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <h1 class="page-title">🎁 Типы подарков</h1>
+</header>
+
+<div class="item-grid">
+    {% for item in items %}
+        <div class="item-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <span class="status-badge status-new">{{ item.category.name|default:"Без категории" }}</span>
+                <span style="color: #aaa; font-size: 0.8rem;">📦 #{{ item.id }}</span>
+            </div>
+            <h3 style="margin: 0 0 1rem 0; color: var(--santa-red); font-size: 1.4rem;">{{ item.title }}</h3>
+            <p style="color: #666; margin-bottom: 1.5rem; flex-grow: 1;">{{ item.description|truncatewords:15 }}</p>
+            <p style="font-weight: 700; color: var(--gold-accent); margin-top: auto; font-size: 1.2rem;">💰 Стоимость: {{ item.price }} эльфо-коинов</p>
+        </div>
+    {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 5rem; background: white; border-radius: 12px; border-top: 5px solid var(--santa-red);">
+            <span style="font-size: 4rem; display: block; margin-bottom: 1.5rem;">❄️</span>
+            <h3>Подарков пока нет</h3>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

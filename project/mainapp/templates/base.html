@@ -3,30 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Учебный проект{% endblock %}</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <title>{% block title %}Santa CRM{% endblock %}</title>
+    <!-- Modular CSS -->
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    <link rel="stylesheet" href="/static/css/santa-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <nav class="navbar">
             <div class="logo">
-                <a href="/">Учебный проект</a>
+                <a href="{% url 'mainapp:home' %}">🎅 SANTA CRM</a>
             </div>
 
             <ul class="nav-links">
-                <li><a href="/">Главная</a></li>
-                <li><a href="/items/">Объекты</a></li>
-                <li><a href="/categories/">Категории</a></li>
-
+                <li><a href="{% url 'mainapp:home' %}">Главная</a></li>
+                
                 {% if user.is_authenticated %}
-                    <li>
-                        <form action="/logout/" method="post" style="display:inline;">
+                    {% if user.is_superuser or user.is_staff %}
+                        <li><a href="{% url 'mainapp:letter_list' %}">Письма</a></li>
+                        <li><a href="{% url 'mainapp:inventory_list' %}">Склад</a></li>
+                        <li><a href="{% url 'mainapp:delivery_list' %}">Логистика</a></li>
+                        <li><a href="{% url 'mainapp:reports' %}">Аналитика</a></li>
+                    {% elif user.role == 'child' %}
+                        <li><a href="{% url 'mainapp:letter_list' %}">Мои письма</a></li>
+                    {% elif user.role == 'helper' %}
+                        <li><a href="{% url 'mainapp:letter_list' %}">Модерация писем</a></li>
+                        <li><a href="{% url 'mainapp:reports' %}">Отчеты</a></li>
+                    {% elif user.role == 'warehouse' %}
+                        <li><a href="{% url 'mainapp:inventory_list' %}">Склад</a></li>
+                    {% elif user.role == 'courier' %}
+                        <li><a href="{% url 'mainapp:delivery_list' %}">Мои доставки</a></li>
+                    {% elif user.role == 'charity' %}
+                        <li><a href="{% url 'mainapp:reports' %}">Благотворительность</a></li>
+                    {% endif %}
+                    
+                    <li class="user-info">
+                        <span style="color: white; margin-right: 15px;"><strong>{{ user.username }}</strong> ({{ user.get_role_display }})</span>
+                        <form action="{% url 'logout' %}" method="post" style="display:inline;">
                             {% csrf_token %}
-                            <button type="submit" class="nav-button">Выход</button>
+                            <button type="submit" class="nav-button btn btn-gold" style="padding: 0.4rem 1rem; font-size: 0.8rem;">Выйти</button>
                         </form>
                     </li>
                 {% else %}
-                    <li><a href="/login/">Вход</a></li>
+                    <li><a href="{% url 'login' %}">Вход</a></li>
+                    <li><a href="{% url 'mainapp:register' %}" class="btn btn-gold" style="padding: 0.5rem 1rem;">Регистрация</a></li>
                 {% endif %}
             </ul>
         </nav>
@@ -36,7 +59,7 @@
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
-                    <div class="message {{ message.tags }}">
+                    <div class="card" style="border-left: 5px solid {% if message.tags == 'success' %}#2e7d32{% else %}#d32f2f{% endif %}; padding: 1rem;">
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -48,7 +71,10 @@
     </main>
 
     <footer class="footer">
-        <p>Учебный клиент-серверный проект на Django</p>
+        <div class="container">
+            <p>&copy; 2026 Система Управления Подарками Деда Мороза</p>
+            <p style="font-size: 0.8rem; color: #888;">Разработано для автоматизации новогоднего чуда по стандартам SOLID/DRY.</p>
+        </div>
     </footer>
 </body>
 </html>

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Список подарков - Santa CRM{% endblock %}
+
+{% block content %}
+<header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1 style="color: var(--santa-red); font-size: 2.2rem; margin: 0;">🎁 Список подарков</h1>
+    <a href="{% url 'mainapp:item_create' %}" class="btn btn-primary" style="padding: 0.8rem 1.8rem; border-radius: 30px; font-weight: 700;">🎁 Добавить подарок</a>
+</header>
+
+<div class="filter-box" style="padding: 1.5rem; background: white; border-radius: 12px; margin-bottom: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--gold-accent);">
+    <form method="get" style="display: flex; gap: 1.5rem; flex-wrap: wrap; width: 100%; align-items: flex-end;">
+        <div class="form-group" style="flex: 1; min-width: 250px; margin-bottom: 0;">
+            <label style="margin-bottom: 0.5rem; font-weight: 600; display: block;">🔍 Поиск</label>
+            <input type="text" name="search" value="{{ search_query|default:'' }}" placeholder="Название или описание..." class="form-input" style="padding: 0.8rem; border-radius: 10px; border: 2px solid #eee;">
+        </div>
+        
+        <div class="form-group" style="min-width: 200px; margin-bottom: 0;">
+            <label style="margin-bottom: 0.5rem; font-weight: 600; display: block;">📂 Категория</label>
+            <select name="category" class="form-input" style="padding: 0.8rem; border-radius: 10px; border: 2px solid #eee; background: white;">
+                <option value="">Все категории</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group" style="min-width: 180px; margin-bottom: 0;">
+            <label style="margin-bottom: 0.5rem; font-weight: 600; display: block;">📊 Статус</label>
+            <select name="status" class="form-input" style="padding: 0.8rem; border-radius: 10px; border: 2px solid #eee; background: white;">
+                <option value="">Все статусы</option>
+                <option value="draft" {% if selected_status == "draft" %}selected{% endif %}>Черновик</option>
+                <option value="sent" {% if selected_status == "sent" %}selected{% endif %}>Отправлено</option>
+                <option value="approved" {% if selected_status == "approved" %}selected{% endif %}>Подтверждено</option>
+                <option value="processing" {% if selected_status == "processing" %}selected{% endif %}>В обработке</option>
+                <option value="delivered" {% if selected_status == "delivered" %}selected{% endif %}>Доставлено</option>
+            </select>
+        </div>
+        
+        <div style="margin-bottom: 0; display: flex; gap: 0.8rem;">
+            <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem; border-radius: 10px;">Применить</button>
+            <a href="{% url 'mainapp:item_list' %}" class="btn btn-gold" style="padding: 0.8rem 1.5rem; border-radius: 10px; color: var(--santa-red);">Сбросить</a>
+        </div>
+    </form>
+</div>
+
+<div class="item-grid">
+    {% for item in items %}
+        <div class="item-card">
+            <div class="item-content">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                    <span class="status-badge status-{{ item.status }}" style="font-size: 0.75rem;">{{ item.get_status_display }}</span>
+                    <span style="color: #888; font-size: 0.8rem;">#{{ item.id }}</span>
+                </div>
+                <h3 style="margin: 0 0 1rem 0; color: var(--santa-red); font-size: 1.4rem;">{{ item.title }}</h3>
+                <p style="color: #666; margin-bottom: 1.5rem; min-height: 3rem;">{{ item.description|truncatewords:15 }}</p>
+                
+                <div style="border-top: 1px solid #eee; padding-top: 1rem; margin-top: auto; display: flex; flex-direction: column; gap: 0.8rem;">
+                    <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: #777;">
+                        <span>📂 <strong>{{ item.category.name|default:"Без категории" }}</strong></span>
+                        <span>🧑 <strong>{{ item.created_by.username|default:"Система" }}</strong></span>
+                    </div>
+                    <div style="display: flex; gap: 0.8rem; margin-top: 0.5rem;">
+                        <a href="{% url 'mainapp:item_detail' item.pk %}" class="btn btn-gold" style="flex: 1; text-align: center; padding: 0.6rem; font-size: 0.9rem; color: var(--santa-red);">Смотреть</a>
+                        <a href="{% url 'mainapp:item_update' item.pk %}" class="btn btn-primary" style="flex: 1; text-align: center; padding: 0.6rem; font-size: 0.9rem;">Правка</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 5rem; background: white; border-radius: 12px; border-top: 5px solid var(--santa-red);">
+            <span style="font-size: 4rem; display: block; margin-bottom: 1.5rem;">❄️</span>
+            <h3>Подарков пока нет</h3>
+            <p style="color: #888;">Может быть, пора добавить парочку? Нажмите кнопку выше.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
