@@ -205,3 +205,20 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Report build artifacts
+report/node_modules/
+report/slide-*.jpg
+report/*.aux
+report/*.log
+report/*.toc
+report/*.out
+report/*.synctex.gz
+report/*.nav
+report/*.snm
+report/missfont.log
+report/package.json
+report/package-lock.json
+report/create_pptx.js
+report/create_itmo_pptx.py
+.DS_Store

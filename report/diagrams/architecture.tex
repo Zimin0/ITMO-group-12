@@ -1,0 +1,31 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\usepackage{polyglossia}
+\setdefaultlanguage{russian}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+
+\begin{document}
+\begin{tikzpicture}[
+    block/.style={rectangle, draw, fill=blue!8, minimum width=2.8cm, minimum height=0.8cm, font=\small, text width=2.6cm, align=center},
+    arrow/.style={-{Stealth[length=2mm]}, thick}
+]
+    \node[block, fill=green!10] (browser) at (0,0) {Браузер\\(клиент)};
+    \node[block] (urlconf) at (4.5,0) {URLconf\\(urls.py)};
+    \node[block] (view) at (9,0) {View\\(views.py)};
+    \node[block, fill=orange!10] (auth) at (9,1.8) {Декораторы\\доступа};
+    \node[block, fill=yellow!10] (service) at (9,-1.8) {Service Layer\\(services.py)};
+    \node[block] (orm) at (13.5,-1.8) {Django ORM};
+    \node[block, fill=gray!15] (db) at (13.5,-3.6) {SQLite};
+    \node[block, fill=red!8] (template) at (13.5,0) {Template\\Engine};
+    \draw[arrow, <->] (browser) -- node[above, font=\scriptsize] {HTTP} (urlconf);
+    \draw[arrow] (urlconf) -- (view);
+    \draw[arrow, <->] (view) -- (auth);
+    \draw[arrow, <->] (view) -- (service);
+    \draw[arrow, <->] (service) -- (orm);
+    \draw[arrow, <->] (orm) -- (db);
+    \draw[arrow] (view) -- (template);
+    \draw[arrow] (template) |- node[near end, above, font=\scriptsize] {HTML} (browser);
+\end{tikzpicture}
+\end{document}

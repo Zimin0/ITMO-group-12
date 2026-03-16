@@ -1,0 +1,32 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\usepackage{polyglossia}
+\setdefaultlanguage{russian}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+
+\begin{document}
+\begin{tikzpicture}[scale=1.0,
+    actor/.style={rectangle, draw, rounded corners=3pt, minimum width=3cm, minimum height=0.8cm, font=\small, fill=white},
+    system/.style={rectangle, draw, fill=blue!10, minimum width=4cm, minimum height=1.5cm, font=\bfseries},
+    db/.style={cylinder, draw, fill=gray!10, shape border rotate=90, aspect=0.2, minimum width=2cm, minimum height=1cm, font=\small},
+    arrow/.style={-{Stealth[length=2mm]}, thick}
+]
+    \node[system] (sys) {Santa CRM};
+    \node[db, right=2.5cm of sys] (db) {SQLite};
+    \node[actor, above left=1.5cm and 3cm of sys] (child) {Ребёнок};
+    \node[actor, left=3.5cm of sys] (helper) {Помощник};
+    \node[actor, below left=1.5cm and 3cm of sys] (warehouse) {Склад};
+    \node[actor, above right=1.5cm and 3cm of sys] (courier) {Курьер};
+    \node[actor, below right=1.5cm and 3cm of sys] (charity) {Благотв. орг.};
+    \node[actor, below=2cm of sys] (admin) {Администратор};
+    \draw[arrow, <->] (child) -- node[above, sloped, font=\scriptsize] {письма} (sys);
+    \draw[arrow, <->] (helper) -- node[above, font=\scriptsize] {модерация} (sys);
+    \draw[arrow, <->] (warehouse) -- node[below, sloped, font=\scriptsize] {запасы} (sys);
+    \draw[arrow, <->] (courier) -- node[above, sloped, font=\scriptsize] {доставки} (sys);
+    \draw[arrow, <->] (charity) -- node[below, sloped, font=\scriptsize] {отчёты} (sys);
+    \draw[arrow, <->] (admin) -- node[right, font=\scriptsize] {управление} (sys);
+    \draw[arrow, <->] (sys) -- node[above, font=\scriptsize] {данные} (db);
+\end{tikzpicture}
+\end{document}

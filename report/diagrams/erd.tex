@@ -1,0 +1,31 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\usepackage{polyglossia}
+\setdefaultlanguage{russian}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+
+\begin{document}
+\begin{tikzpicture}[
+    entity/.style={rectangle, draw, fill=blue!8, minimum width=2.2cm, minimum height=0.9cm, font=\small\bfseries},
+    rel/.style={font=\scriptsize, fill=white, inner sep=1pt},
+    arrow/.style={-{Stealth[length=2mm]}, thick}
+]
+    \node[entity] (user) at (0,0) {User};
+    \node[entity] (letter) at (4,0) {Letter};
+    \node[entity] (order) at (8,0) {GiftOrder};
+    \node[entity] (delivery) at (12,0) {Delivery};
+    \node[entity] (category) at (0,-3) {Category};
+    \node[entity] (item) at (4,-3) {Item};
+    \node[entity] (inventory) at (8,-3) {Inventory};
+    \draw[arrow] (user) -- node[rel, above] {1 : N} node[rel, below] {\scriptsize child} (letter);
+    \draw[arrow] (letter) -- node[rel, above] {1 : 1} (order);
+    \draw[arrow] (order) -- node[rel, above] {1 : 1} (delivery);
+    \draw[arrow, dashed] (user) .. controls (2, 1.2) and (6, 1.2) .. node[rel, above] {\scriptsize moderated\_by} (letter.north);
+    \draw[arrow, dashed] (user) .. controls (4, 2) and (10, 2) .. node[rel, above] {\scriptsize courier} (delivery.north);
+    \draw[arrow] (category) -- node[rel, above] {1 : N} (item);
+    \draw[arrow] (item) -- node[rel, above] {1 : 1} (inventory);
+    \draw[arrow, <->] (item) -- node[rel, right] {M : N} (order);
+\end{tikzpicture}
+\end{document}
